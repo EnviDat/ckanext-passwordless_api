@@ -30,6 +30,7 @@ Notes:
 
 - It is also recommended to disable access to the API via cookie, to help prevent CSRF:
   `ckan.auth.disable_cookie_auth_in_api = true`
+- Tokens should be revoked on logout using the core action (api_token_revoke).
 - The configuration for API tokens can be configured in core:
 
 ```ini
