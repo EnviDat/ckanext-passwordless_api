@@ -1,0 +1,42 @@
+[project]
+name = "ckanext-passwordless_api"
+version = "0.0.1"
+description = "Extension to allow paswordless login to the CKAN API"
+authors = [
+    {name = "Sam Woodcock", email = "sam.woodcock@protonmail.com"},
+]
+dependencies = []
+requires-python = ">=3.7"
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["CKAN", "passwordless", "token", "auth"]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10"
+]
+
+[project.entry-points."ckan.plugins"]
+passwordless_api = "ckanext.passwordless_api.plugin:PasswordlessAPIPlugin"
+
+[project.urls]
+Homepage = "https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api"
+
+[project.optional-dependencies]
+[build-system]
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"
+
+[tool.pdm]
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest-ckan>=0.0.12",
+]
+
+[tool.isort]
+profile = "black"
+atomic = true
+known_first_party = ["ckanext"]

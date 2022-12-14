@@ -1,0 +1,15 @@
+Dear {{ user_email }},
+
+You have requested an access token on {{ site_title }}.
+
+Your single use {{ site_title }} token is: <b>{{ key }}</b>
+
+Please note that this token will allow you to login in {{ site_title }} only once and you will need to request a new token everytime you want to log in.
+
+If you didn’t request access to {{ site_title }}, you can simply disregard this email.
+
+Have a nice day!
+{{ site_title }} Support
+
+--
+Message sent by {{ site_title }} ({{ site_url }})

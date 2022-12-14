@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+sdist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PDM
+__pypackages__
+.pdm.toml
+pdm.lock
