@@ -1,8 +1,8 @@
-Dear {{ user_email }},
+Dear {{ display_name }},
 
 You have requested an access token on {{ site_title }}.
 
-Your single use {{ site_title }} token is: <b>{{ key }}</b>
+Your single use {{ site_title }} token is: {{ reset_key_bold }}
 
 Please note that this token will allow you to login in {{ site_title }} only once and you will need to request a new token everytime you want to log in.
 

@@ -9,44 +9,52 @@ from ckan.lib.base import render
 log = logging.getLogger(__name__)
 
 
-def send_login_token(user):
+def send_user_reset_key(user):
     """Send the login token email."""
     mailer.create_reset_key(user)
+    if reset_key := user.reset_key:
+        # Strip b'' wrapping
+        reset_key = reset_key[2:-1]
     # log.debug("passwordless_send_reset_link user = " + str(user))
-    body = _get_login_token_body(user)
-    subject = f"{config.get('ckan.site_title')} access token"
+    body = _get_user_reset_key_body(user.as_dict(), reset_key)
+    subject = f"Access token: {reset_key}"
     mailer.mail_user(user, subject, body)
 
 
-def _get_login_token_body(user):
+def _get_user_reset_key_body(user: dict, reset_key):
     """Render the login token email."""
-    if reset_key := user.get("reset_key"):
-        # Strip b'' wrapping
-        reset_key = reset_key[2:-1]
+    if display_name := user.get("fullname"):
+        pass
+    elif display_name := user.get("name"):
+        pass
+    else:
+        display_name = user.get("email")
     extra_vars = {
         "site_title": config.get("ckan.site_title"),
         "site_url": config.get("ckan.site_url"),
-        "user_name": user.get("name"),
-        "user_fullname": user.get("fullname"),
-        "user_email": user.get("email"),
-        "key": reset_key,
+        "display_name": display_name,
+        "reset_key_bold": reset_key,
     }
     # NOTE: This template is translated
-    return render("emails/login_token.txt", extra_vars)
+    reset_key_template = config.get(
+        "passwordless_api.reset_key_template",
+        "reset_key.txt",
+    )
+    return render(reset_key_template, extra_vars)
 
 
 def send_welcome_email(user):
     """Send the welcome email."""
-    body = _get_welcome_email_body(user)
+    body = _get_welcome_email_body(user.as_dict())
     subject = "Welcome to {}".format(config.get("ckan.site_title"))
 
     # log.debug(
     #     f"passwordless_mailer: Welcome email subject: '{subject}',  body: \n {body}"
     # )
-    mailer.mail_recipient(user.get("name"), user.get("email"), subject, body)
+    mailer.mail_user(user, subject, body)
 
 
-def _get_welcome_email_body(user):
+def _get_welcome_email_body(user: dict):
     """Render the welcome email."""
     extra_vars = {
         "site_title": config.get("ckan.site_title"),
@@ -62,6 +70,7 @@ def _get_welcome_email_body(user):
 
     # NOTE: This template is translated
     welcome_template = config.get(
-        "passwordless.welcome_template", "emails/welcome_user.txt"
+        "passwordless_api.welcome_template",
+        "welcome_user.txt",
     )
     return render(welcome_template, extra_vars)

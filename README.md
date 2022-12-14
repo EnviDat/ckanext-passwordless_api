@@ -16,8 +16,15 @@ Two variables can be set in your ckan.ini:
   A link to your website guidelines.
 - passwordless_api.policies_url
   A link to your website policies.
+- passwordless_api.welcome_template
+  Path to welcome template to render as html email
+- passwordless_api.reset_key_template
+  Path to reset key template to render as html email
 
-The variables can be omited to not include them in welcome emails.
+All variables are optional:
+
+- Omitting guidelines_url or policies_url will not include them in the welcome email.
+- Omitting welcome_template or reset_key_template will use default templates.
 
 Notes:
 
@@ -30,6 +37,7 @@ api_token.nbytes = 60
 api_token.jwt.decode.secret = string:YOUR_SUPER_SECRET_STRING
 api_token.jwt.algorithm = HS256
 
-# expire_api_token plugin
-expire_api_token.default_lifetime = 86400
+# expire_api_token plugin (unit = 1 day in seconds, lifetime = 3 days)
+expire_api_token.default_lifetime = 3
+expire_api_token.default_unit = 86400
 ```

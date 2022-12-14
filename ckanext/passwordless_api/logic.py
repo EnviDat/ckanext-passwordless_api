@@ -2,6 +2,7 @@
 
 import logging
 
+from ckan.common import config
 from ckan.lib import mailer
 from ckan.lib.navl.dictization_functions import DataError
 from ckan.lib.redis import connect_to_redis
@@ -9,7 +10,7 @@ from ckan.plugins import toolkit
 from sqlalchemy.exc import InternalError as SQLAlchemyError
 
 from ckanext.passwordless_api import util
-from ckanext.passwordless_api.mailer import send_login_token, send_welcome_email
+from ckanext.passwordless_api.mailer import send_user_reset_key, send_welcome_email
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ def request_reset_key(context, data_dict):
     Returns:
         str: Success string.
     """
-    log.debug(f"Action request_reset_key: {data_dict}")
+    log.debug(f"Request reset key with params: {data_dict}")
 
     # Check email is present in POST data
     try:
@@ -40,23 +41,23 @@ def request_reset_key(context, data_dict):
     util.check_reset_attempts(email.encode())
 
     # get existing user from email
-    user = util.get_user(email)
-    # log.debug('passwordless_request_reset: USER is = ' + str(user))
+    user = util.get_user_from_email(email)
+    # log.debug(f'USER is {str(user)})
 
     if not user:
         # A user with this email address doesn't yet exist in CKAN,
         # so create one.
         user = _create_user(email)
-        log.debug("passwordless_request_reset: created user = " + str(email))
+        log.debug(f"Created user {str(email)}")
 
     if user:
         # make sure is not deleted
-        if user.get("state") == "deleted":
+        if user.state == "deleted":
             raise toolkit.ValidationError(
                 {"user": f"User with email {email} was deleted"}
             )
         try:
-            send_login_token(user)
+            send_user_reset_key(user)
 
         except mailer.MailerException as e:
             log.error(f"Could not send token link: {str(e)}")
@@ -85,7 +86,6 @@ def _create_user(email):
         user = toolkit.get_action("user_create")(
             context={"ignore_auth": True}, data_dict=data_dict
         )
-        # log.debug("_create_user: user = {0}".format(user))
         send_welcome_email(user)
     except SQLAlchemyError as error:
         exception_message = f"{error}"
@@ -107,7 +107,7 @@ def request_api_token(context, data_dict):
     Returns:
         str: CKAN API token for user.
     """
-    log.debug(f"Action request_api_token: {data_dict}")
+    log.debug(f"Requesting API token with params: {data_dict}")
 
     if toolkit.c.user:
         # Don't offer the reset form if already logged in
@@ -121,10 +121,10 @@ def request_api_token(context, data_dict):
         raise toolkit.ValidationError({"key": "missing token"})
     # Check email valid
     email = email.lower()
-    if not util.check_email(email):
+    if not util.email_is_valid(email):
         raise toolkit.ValidationError({"email": "invalid email"})
     # Set user
-    if not (user := util.get_user(email)):
+    if not (user := util.get_user_from_email(email)):
         raise toolkit.ValidationError(
             {"email": "email does not correspond to a registered user"}
         )
@@ -135,8 +135,8 @@ def request_api_token(context, data_dict):
     else:
         key = orig_key
 
-    user_id = user.get("id")
-    log.debug(f"login: {user_id} ({orig_key}) => {key}")
+    user_id = user.id
+    log.debug(f"User id: {user_id} ({orig_key}) => {key}")
 
     # Check provided key is valid
     if not user or not mailer.verify_reset_link(user, key):
@@ -150,38 +150,6 @@ def request_api_token(context, data_dict):
     redis_conn = connect_to_redis()
     redis_conn.delete(email)
 
-    return util.renew_main_token(user_id)
-
-
-def revoke_api_token(context, data_dict):
-    """
-    Revoke API token for a user.
-
-    data_dict contains API token value.
-
-    Returns:
-        str: Success message.
-    """
-    log.debug(f"Action revoke_api_token: {data_dict}")
-
-    # Check if parameters are present
-    if not (api_token := data_dict.get("api_token")):
-        raise toolkit.ValidationError({"token": "missing api token to revoke"})
-
-    try:
-        toolkit.get_action("api_token_revoke")(
-            data_dict={
-                "token": api_token,
-            },
-        )
-    except toolkit.NotAuthorized:
-        raise toolkit.NotAuthorized(
-            "NotAuthorized to revoke API token. "
-            "Did you provide a valid token in the Authorization header?"
-        )
-        return {"message": "failed"}
-    except Exception as e:
-        log.warning(f"Could not delete API token due to: {e}")
-        return {"message": "failed"}
-
-    return {"message": "success"}
+    expiry = config.get("expire_api_token.default_lifetime", 3)
+    units = config.get("expire_api_token.default_unit", 86400)
+    return util.renew_main_token(user_id, expiry, units)

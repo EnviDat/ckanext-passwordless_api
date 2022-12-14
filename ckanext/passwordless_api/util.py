@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from ckan import logic
 from ckan.lib.redis import connect_to_redis
+from ckan.model import User
 from ckan.plugins import toolkit
 from dateutil import parser as dateparser
 
@@ -21,45 +22,30 @@ def email_is_valid(email):
     return False
 
 
-def get_user_id(email):
-    """
-    Return the CKAN user id with the given email address.
-
-    Returns:
-        str: A CKAN user id
-    """
-    # make case insensitive
-    email = email.lower()
-
-    try:
-        # Email filter option doesn't seem to work, so used q filter instead
-        users = toolkit.get_action("user_list")(data_dict={"q": email})
-    except toolkit.NotAuthorized:
-        raise toolkit.NotAuthorized(f"Exception (Not Authorized) email={email}")
-
-    if users:
-        user = users[0]
-        return user.id
-    return None
-
-
-def get_user(email):
+def get_user_from_email(email):
     """
     Get the CKAN user with the given email address.
 
     Returns:
         dict: A CKAN user dict.
     """
-    id = get_user_id(email)
+    # make case insensitive
+    email = email.lower()
+    log.debug(f"Getting user id for email: {email}")
 
-    if id:
-        try:
-            user_dict = toolkit.get_action("user_show")(data_dict={"id": id})
-            return user_dict
-        except toolkit.NotAuthorized:
-            raise toolkit.NotAuthorized(
-                f"Exception (Not Authorized) email={email} id={str(id)}"
-            )
+    # Workaround as action user_list requires sysadmin priviledge
+    # to return emails (email_hash is returned otherwise, with no matches)
+    # action user_show also doesn't return the reset_key...
+    # by_email returns .first() item
+    users = User.by_email(email)
+
+    if users:
+        # as_dict() method on CKAN User object
+        user = users[0]
+        log.debug(f"Returning user id ({user.id}) for email {email}.")
+        return user
+
+    log.warning(f"No matching users found for email: {email}")
     return None
 
 
@@ -70,7 +56,10 @@ def get_new_username(email):
     username = generate_user_name(email)
     while offset < 100000:
         try:
-            toolkit.get_action("user_show")(data_dict={"id": username})
+            toolkit.get_action("user_show")(
+                context={"ignore_auth": True},
+                data_dict={"id": username},
+            )
             log.debug(f"User creation: {username} exists. Attempting next...")
         except logic.NotFound:
             log.debug(f"User creation: {username} does not exist. Creating...")
@@ -112,41 +101,48 @@ def generate_password():
     return str(uuid4())
 
 
-def renew_main_token(user_id):
+def renew_main_token(user_id: str, expiry: int, units: int):
     """
     Revoke and re-create API token named 'main' for a user.
 
-    user can be either user object or user id.
+    Args:
+        user_id (str): User ID.
+        expiry (int): Token expires in.
+        units (int): Units for expiration time.
+
+    Returns:
+        str: API token for user.
     """
-    log.debug("renew_main_token: Renewing API KEY token **")
+    log.debug(f"Renewing API token 'main' for user id: {user_id}")
 
     if isinstance(user_id, str):
-        user_id = user_id.get("id")
         # check if there is one already and delete it
         data_dict = {"user": user_id}
-        api_keys = toolkit.get_action("api_token_list")(
+        api_tokens = toolkit.get_action("api_token_list")(
             context={"ignore_auth": True}, data_dict=data_dict
         )
         log.debug(
-            f"renew_main_token ({data_dict[u'user']}) "
-            "api_keys = {', '.join([k['name'] for k in api_keys])}"
+            f"User ID {user_id}) API tokens: "
+            f"{', '.join([k['name'] for k in api_tokens])}"
         )
-        for key in api_keys:
-            if key.get("name") == "main":
-                log.debug(f"renew_main_token deleting key = {key}")
+        for token in api_tokens:
+            if token.get("name") == "main":
+                log.debug(f"Revoking API token {token}")
                 toolkit.get_action("api_token_revoke")(
-                    context={"ignore_auth": True}, data_dict={"jti": key["id"]}
+                    context={"ignore_auth": True}, data_dict={"jti": token["id"]}
                 )
 
-        # generate new API KEY for user
+        log.debug("Generating API token for user with expiry: {}")
         new_api_key = toolkit.get_action("api_token_create")(
             context={"ignore_auth": True},
             data_dict={
                 "user": user_id,
                 "name": "main",
+                "expires_in": expiry,
+                "unit": units,
             },
         )
-        log.debug(f"renew_main_token new API key: {new_api_key}")
+        log.debug(f"New API key: {new_api_key}")
         return new_api_key["token"]
     else:
         return None
