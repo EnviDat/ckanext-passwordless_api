@@ -1,6 +1,27 @@
 # CKAN Passwordless API
 
-Extension to allow paswordless login to the CKAN API.
+<div align="center">
+  <em>Extension to allow paswordless login to the CKAN API.</em>
+</div>
+<div align="center">
+  <a href="https://pypi.org/project/ckanext-passwordless_api" target="_blank">
+      <img src="https://img.shields.io/pypi/v/ckanext-passwordless_api?color=%2334D058&label=pypi%20package" alt="Package version">
+  </a>
+  <a href="https://pypistats.org/packages/ckanext-passwordless_api" target="_blank">
+      <img src="https://img.shields.io/pypi/dm/ckanext-passwordless_api.svg" alt="Downloads">
+  </a>
+  <a href="https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api/-/raw/main/LICENCE" target="_blank">
+      <img src="https://img.shields.io/github/license/EnviDat/ckanext-passwordless_api.svg" alt="Licence">
+  </a>
+</div>
+
+---
+
+**Documentation**: <a href="https://envidat.gitlab-pages.wsl.ch/ckanext-passwordless_api/" target="_blank">https://envidat.gitlab-pages.wsl.ch/ckanext-passwordless_api/</a>
+
+**Source Code**: <a href="https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api" target="_blank">https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api</a>
+
+---
 
 **This plugin is primarily intended for custom frontends built on the CKAN API.**
 
