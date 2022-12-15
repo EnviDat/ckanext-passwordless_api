@@ -4,33 +4,51 @@ Extension to allow paswordless login to the CKAN API.
 
 **This plugin is primarily intended for custom frontends built on the CKAN API.**
 
-By using API tokens from CKAN core (>2.9), this plugin provides an authentication flow where tokens are sent to the user via email.
+By using API tokens from CKAN core (>2.9), this plugin provides an authentication flow where:
+
+1. Users receive a login token via email (via reset key in core).
+2. API token is returned on valid login token (reset key) submission.
+3. The API token should then be included in Authorization headers from the frontend --> CKAN calls.
 
 Based on work by @espona (Lucia Espona Pernas) for ckanext-passwordless (https://github.com/EnviDat/ckanext-passwordless).
 
 ## Config
 
-Two variables can be set in your ckan.ini:
+Optional variables can be set in your ckan.ini to modify the email templates:
 
-- passwordless_api.guidelines_url
-  A link to your website guidelines.
-- passwordless_api.policies_url
-  A link to your website policies.
-- passwordless_api.welcome_template
-  Path to welcome template to render as html email
-- passwordless_api.reset_key_template
-  Path to reset key template to render as html email
+- **passwordless_api.guidelines_url**
+  Description: A link to your website guidelines.
+  Default: None, not included.
+- **passwordless_api.policies_url**
+  Description: A link to your website policies.
+  Default: None, not included.
+- **passwordless_api.welcome_template**
+  Description: Path to welcome template to render as html email.
+  Default: uses default template.
+- **passwordless_api.reset_key_template**
+  Description: Path to reset key template to render as html email
+  Default: uses default template.
 
-All variables are optional:
+## Endpoints
 
-- Omitting guidelines_url or policies_url will not include them in the welcome email.
-- Omitting welcome_template or reset_key_template will use default templates.
+All endpoints require a POST body.
 
-Notes:
+- **passwordless_request_reset_key**
+  Description: Request a login token for a given email.
+  Creates user if they do not exist & sends welcome email.
+  Param1: email (str).
+- **passwordless_request_api_token**
+  Description: Request an API token, given the email and login token (reset_key).
+  Param1: email (str).
+  Param2: key (str).
+- **passwordless_revoke_api_token**
+  Description: Revoke an API token.
+  Param1: token (str).
+
+## Notes
 
 - It is also recommended to disable access to the API via cookie, to help prevent CSRF:
   `ckan.auth.disable_cookie_auth_in_api = true`
-- Tokens should be revoked on logout using the core action (api_token_revoke).
 - The configuration for API tokens can be configured in core:
 
 ```ini
