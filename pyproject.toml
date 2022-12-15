@@ -23,9 +23,10 @@ classifiers = [
 passwordless_api = "ckanext.passwordless_api.plugin:PasswordlessAPIPlugin"
 
 [project.urls]
-Homepage = "https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api"
+homepage = "https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api.git"
+documentation = "https://envidat.gitlab-pages.wsl.ch/ckanext-passwordless_api"
+repository = "https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api.git"
 
-[project.optional-dependencies]
 [build-system]
 requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
@@ -33,7 +34,7 @@ build-backend = "pdm.pep517.api"
 [tool.pdm]
 includes = ["ckanext"]
 source-includes = ["ckanext", "CHANGELOG.md", "LICENSE", "README.md"]
-version = {from = "envidat/__version__.py"}
+version = {from = "ckanext/passwordless_api/__version__.py"}
 
 [[tool.pdm.source]]
 name = "pypi"
@@ -47,11 +48,13 @@ dev = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.2.0"
+version = "0.1.0"
 version_files = [
     "pyproject.toml:version",
-    "ckanext/passwordless_api/__version__.py"
+    "ckanext/passwordless_api/__version__.py",
+    "docs/openapi.yaml:info.version",
 ]
+
 [tool.isort]
 profile = "black"
 atomic = true
