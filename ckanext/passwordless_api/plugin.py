@@ -4,7 +4,11 @@ import logging
 
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 
-from ckanext.passwordless_api.logic import request_api_token, request_reset_key
+from ckanext.passwordless_api.logic import (
+    request_api_token,
+    request_reset_key,
+    revoke_api_token_no_auth,
+)
 
 log = logging.getLogger(__name__)
 
@@ -30,4 +34,5 @@ class PasswordlessAPIPlugin(SingletonPlugin):
         return {
             "passwordless_request_reset_key": request_reset_key,
             "passwordless_request_api_token": request_api_token,
+            "passwordless_revoke_api_token": revoke_api_token_no_auth,
         }

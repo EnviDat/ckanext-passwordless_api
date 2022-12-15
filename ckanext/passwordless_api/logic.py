@@ -153,3 +153,35 @@ def request_api_token(context, data_dict):
     expiry = config.get("expire_api_token.default_lifetime", 3)
     units = config.get("expire_api_token.default_unit", 86400)
     return util.renew_main_token(user_id, expiry, units)
+
+
+def revoke_api_token_no_auth(context, data_dict):
+    """
+    Revoke API token for a user, without requiring auth.
+
+    Useful for when user API token has expired already, but they wish to check
+    is revokation is possible (i.e. during logout - revoke if possible).
+
+    data_dict contains API token value.
+
+    Returns:
+        str: Success message.
+    """
+    log.debug("Revoking API token is present.")
+
+    # Check if parameters are present
+    if not (api_token := data_dict.get("token")):
+        raise toolkit.ValidationError({"token": "missing api token to revoke"})
+
+    try:
+        toolkit.get_action("api_token_revoke")(
+            context={"ignore_auth": True},
+            data_dict={
+                "token": api_token,
+            },
+        )
+        return {"message": "success"}
+
+    except Exception as e:
+        log.warning(f"Could not delete API token due to: {e}")
+        return {"message": "failed"}
