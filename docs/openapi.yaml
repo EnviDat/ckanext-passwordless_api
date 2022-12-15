@@ -6,7 +6,8 @@ info:
 paths:
   /passwordless_request_reset_key:
     post:
-      summary: Request a passwordless API token to be sent by email.
+      summary: Email Key
+      description: Request a reset key (login token) to be sent by email.
       requestBody:
         required: true
         content:
@@ -21,7 +22,8 @@ paths:
           description: '{message: "success"}'
   /passwordless_request_api_token:
     post:
-      summary: Get API token for a user, if reset key valid.
+      summary: Request API Token
+      description: Get API token for a user, if reset key valid.
       requestBody:
         required: true
         content:
@@ -38,7 +40,8 @@ paths:
           description: The API token.
   /passwordless_revoke_api_token:
     post:
-      summary: Revoke API token for a user, without requiring auth.
+      summary: Revoke API token.
+      description: Revoke API token for a user, without requiring auth.
       requestBody:
         required: true
         content:

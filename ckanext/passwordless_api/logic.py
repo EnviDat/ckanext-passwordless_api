@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 def request_reset_key(context, data_dict):
     """
-    Request a passwordless API token to be sent by email.
+    Request a reset key (login token) to be sent by email.
 
     POST data_dict must contain email.
 
