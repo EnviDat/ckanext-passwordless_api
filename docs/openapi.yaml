@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: ckanext-passwordless_api
+  description: Extension to allow paswordless login to the CKAN API.
+  version: 0.1.0
+paths:
+  /passwordless_request_reset_key:
+    post:
+      summary: Request a passwordless API token to be sent by email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        "200":
+          description: '{message: "success"}'
+  /passwordless_request_api_token:
+    post:
+      summary: Get API token for a user, if reset key valid.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                key:
+                  type: string
+      responses:
+        "200":
+          description: The API token.
+  /passwordless_revoke_api_token:
+    post:
+      summary: Revoke API token for a user, without requiring auth.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        "200":
+          description: '{message: "success"}'
