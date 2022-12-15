@@ -1,0 +1,37 @@
+stages:
+  - deploy
+
+workflow:
+  rules:
+    - if: >
+        ($CI_COMMIT_REF_NAME == "main"
+        || $CI_COMMIT_REF_NAME == "gh-pages")
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+
+pip-package:
+  stage: deploy
+  image: python:3.9
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - pip install pdm twine
+    - pdm config python.use_venv false
+  script:
+    - pdm build
+    - >
+      twine upload
+      -u "__token__"
+      -p "$PYPI_API_TOKEN"
+      dist/* --verbose --skip-existing
+
+pages:
+  stage: deploy
+  image: node:latest
+  script:
+    - npm install -g redoc-cli
+    - redoc-cli bundle -o public/index.html docs/openapi.yaml
+  artifacts:
+    paths:
+      - public
