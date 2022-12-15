@@ -1,19 +1,19 @@
 [project]
 name = "ckanext-passwordless_api"
-version = "0.0.1"
+dynamic = ["version"]
 description = "Extension to allow paswordless login to the CKAN API"
 authors = [
     {name = "Sam Woodcock", email = "sam.woodcock@protonmail.com"},
 ]
 dependencies = []
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 readme = "README.md"
 license = {text = "MIT"}
 keywords = ["CKAN", "passwordless", "token", "auth"]
 classifiers = [
+    "Topic :: Utilities",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10"
@@ -31,11 +31,27 @@ requires = ["pdm-pep517>=1.0.0"]
 build-backend = "pdm.pep517.api"
 
 [tool.pdm]
+includes = ["ckanext"]
+source-includes = ["ckanext", "CHANGELOG.md", "LICENSE", "README.md"]
+version = {from = "envidat/__version__.py"}
+
+[[tool.pdm.source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
 [tool.pdm.dev-dependencies]
 dev = [
     "pytest-ckan>=0.0.12",
 ]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = [
+    "pyproject.toml:version",
+    "ckanext/passwordless_api/__version__.py"
+]
 [tool.isort]
 profile = "black"
 atomic = true
