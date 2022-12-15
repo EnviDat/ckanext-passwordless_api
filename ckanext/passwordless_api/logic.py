@@ -22,7 +22,7 @@ def request_reset_key(context, data_dict):
     POST data_dict must contain email.
 
     Returns:
-        str: Success string.
+        dict: {message: 'success'}
     """
     log.debug(f"Request reset key with params: {data_dict}")
 
@@ -68,7 +68,7 @@ def request_reset_key(context, data_dict):
             {"user": "cannot retrieve or create user with given email"}
         )
 
-    return "Token requested successfully."
+    return {"message": "success"}
 
 
 def _create_user(email):
@@ -165,7 +165,7 @@ def revoke_api_token_no_auth(context, data_dict):
     data_dict contains API token value.
 
     Returns:
-        str: Success message.
+        dict: {message: 'success'}
     """
     log.debug("Revoking API token is present.")
 
