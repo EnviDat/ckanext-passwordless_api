@@ -9,6 +9,8 @@ from ckan.lib.navl.dictization_functions import DataError
 from ckan.lib.redis import connect_to_redis
 from ckan.logic import side_effect_free
 from ckan.plugins import toolkit
+
+# from ckan.types import Context, DataDict
 from sqlalchemy.exc import InternalError as SQLAlchemyError
 
 from ckanext.passwordless_api import util
@@ -17,7 +19,10 @@ from ckanext.passwordless_api.mailer import send_user_reset_key, send_welcome_em
 log = logging.getLogger(__name__)
 
 
-def request_reset_key(context, data_dict):
+def request_reset_key(
+    context,  #: Context,
+    data_dict,  #: DataDict
+):
     """
     Request a reset key (login token) to be sent by email.
 
@@ -104,7 +109,10 @@ def _create_user(email):
     return user
 
 
-def request_api_token(context, data_dict):
+def request_api_token(
+    context,  #: Context,
+    data_dict,  #: DataDict
+):
     """
     Get API token for a user, if reset key valid.
 
@@ -113,7 +121,7 @@ def request_api_token(context, data_dict):
         data_dict.key (str): Reset key of user (from email after request_reset_key).
 
     Returns:
-        str: CKAN API token for user.
+        dict: CKAN API token for user {'token': token_value}.
     """
     log.debug(f"Requesting API token with params: {data_dict}")
 
@@ -158,12 +166,15 @@ def request_api_token(context, data_dict):
     redis_conn = connect_to_redis()
     redis_conn.delete(email)
 
-    expiry = config.get("expire_api_token.default_lifetime", 3)
-    units = config.get("expire_api_token.default_unit", 86400)
+    expiry = int(config.get("expire_api_token.default_lifetime", 3))
+    units = int(config.get("expire_api_token.default_unit", 86400))
     return util.renew_main_token(user_id, expiry, units)
 
 
-def revoke_api_token_no_auth(context, data_dict):
+def revoke_api_token_no_auth(
+    context,  #: Context,
+    data_dict,  #: DataDict
+):
     """
     Revoke API token for a user, without requiring auth.
 
@@ -201,7 +212,10 @@ def revoke_api_token_no_auth(context, data_dict):
 
 
 @side_effect_free
-def get_current_user_and_renew_api_token(context, data_dict):
+def get_current_user_and_renew_api_token(
+    context,  #: Context,
+    data_dict,  #: DataDict
+):
     """
     Return CKAN user and renew API token.
 
@@ -239,10 +253,10 @@ def get_current_user_and_renew_api_token(context, data_dict):
     if user:
         expiry = config.get("expire_api_token.default_lifetime", 3)
         units = config.get("expire_api_token.default_unit", 86400)
-        token = util.renew_main_token(user_id, expiry, units)
+        token_json = util.renew_main_token(user_id, expiry, units)
         return {
             "user": user,
-            "token": token,
+            "api_token": token_json.get("token"),
         }
 
     return {"message": "failed"}

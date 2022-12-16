@@ -14,7 +14,7 @@ from dateutil import parser as dateparser
 log = logging.getLogger(__name__)
 
 
-def email_is_valid(email):
+def email_is_valid(email: str):
     """Match an email against regex for validation."""
     if email:
         if regexmatch(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
@@ -22,7 +22,7 @@ def email_is_valid(email):
     return False
 
 
-def get_user_from_email(email):
+def get_user_from_email(email: str):
     """
     Get the CKAN user with the given email address.
 
@@ -49,7 +49,7 @@ def get_user_from_email(email):
     return None
 
 
-def get_new_username(email):
+def get_new_username(email: str):
     """Generate a new username and check does not exist."""
     offset = 0
     email = email.lower()
@@ -69,7 +69,7 @@ def get_new_username(email):
     return None
 
 
-def generate_user_name(email, offset=0):
+def generate_user_name(email: str, offset: int = 0):
     """
     Generate a user name for the given email address.
 
@@ -86,7 +86,7 @@ def generate_user_name(email, offset=0):
     return username
 
 
-def generate_user_fullname(email):
+def generate_user_fullname(email: str):
     """Generate fullname from a given email address."""
     # FIXME: Generate a better user name, based on the email, but still making
     # sure it's unique.
@@ -143,12 +143,12 @@ def renew_main_token(user_id: str, expiry: int, units: int):
             },
         )
         log.debug(f"New API key: {new_api_key}")
-        return new_api_key["token"]
+        return new_api_key
     else:
         return None
 
 
-def check_reset_attempts(email):
+def check_reset_attempts(email: str):
     """Check if token reset limit exceeded by user."""
     redis_conn = connect_to_redis()
     if email not in redis_conn.keys():
