@@ -1,3 +1,9 @@
+## 0.2.2 (2022-12-16)
+
+### Fix
+
+- add api token cookie to get_user requests also
+
 ## 0.2.1 (2022-12-16)
 
 ### Fix
