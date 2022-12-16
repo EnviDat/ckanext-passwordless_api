@@ -21,7 +21,8 @@ def request_reset_key(context, data_dict):
     """
     Request a reset key (login token) to be sent by email.
 
-    POST data_dict must contain email.
+    Args:
+        data_dict.email (str): Email of user.
 
     Returns:
         dict: {message: 'success'}
@@ -107,7 +108,9 @@ def request_api_token(context, data_dict):
     """
     Get API token for a user, if reset key valid.
 
-    data_dict contains reset key and user email.
+    Args:
+        data_dict.email (str): Email of user.
+        data_dict.key (str): Reset key of user (from email after request_reset_key).
 
     Returns:
         str: CKAN API token for user.
@@ -167,7 +170,8 @@ def revoke_api_token_no_auth(context, data_dict):
     Useful for when user API token has expired already, but they wish to check
     if revokation is possible (i.e. during logout - revoke if possible).
 
-    data_dict contains API token value.
+    Args:
+        data_dict.token (str): Value of API token to revoke.
 
     Returns:
         dict: {message: 'success'}
