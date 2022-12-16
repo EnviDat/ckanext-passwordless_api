@@ -52,19 +52,24 @@ Optional variables can be set in your ckan.ini to modify the email templates:
 
 ## Endpoints
 
-All endpoints require a POST body.
+**POST**
 
-- **passwordless_request_reset_key**
-  Description: Request a login token for a given email.
-  Creates user if they do not exist & sends welcome email.
-  Param1: email (str).
-- **passwordless_request_api_token**
-  Description: Request an API token, given the email and login token (reset_key).
-  Param1: email (str).
-  Param2: key (str).
-- **passwordless_revoke_api_token**
-  Description: Revoke an API token.
-  Param1: token (str).
+- **<CKAN_HOST>/api/3/action/passwordless_request_reset_key**
+  - Description: Request a login token for a given email.
+  - Creates user if they do not exist & sends welcome email.
+  - Param1: email (str).
+- **<CKAN_HOST>/api/3/action/passwordless_request_api_token**
+  - Description: Request an API token, given the email and login token (reset_key).
+  - Param1: email (str).
+  - Param2: key (str).
+- **<CKAN_HOST>/api/3/action/passwordless_revoke_api_token**
+  - Description: Revoke an API token.
+  - Param1: token (str).
+
+**GET**
+
+- **<CKAN_HOST>/api/3/action/passwordless_get_user**
+  - Description: Get user details, given their API token. Also resets and returns a new API token (i.e. renewal).
 
 ## Notes
 
