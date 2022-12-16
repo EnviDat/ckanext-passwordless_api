@@ -35,7 +35,7 @@ Based on work by @espona (Lucia Espona Pernas) for ckanext-passwordless (https:/
 
 ## Config
 
-Optional variables can be set in your ckan.ini to modify the email templates:
+Optional variables can be set in your ckan.ini:
 
 - **passwordless_api.guidelines_url**
   Description: A link to your website guidelines.
@@ -49,6 +49,20 @@ Optional variables can be set in your ckan.ini to modify the email templates:
 - **passwordless_api.reset_key_template**
   Description: Path to reset key template to render as html email
   Default: uses default template.
+- **passwordless_api.cookie_name**
+  Description: Set to place the API token in a cookie, with given name.
+  The cookie will default to `secure`, `httpOnly`, `samesite: Lax`.
+  Default: None, no cookie used.
+- **passwordless_api.cookie_domain**
+  Description: The domain for samesite to respect, required if cookie set.
+  Default: None.
+- **passwordless_api.cookie_samesite**
+  Description: To change the cookie samesite value to `Strict`.
+  Only enable this if you know what you are doing.
+  Default: None, samesite value is set to `Lax`.
+- **passwordless_api.cookie_http_only**
+  Description: Use a httpOnly cookie, recommended.
+  Default: true.
 
 ## Endpoints
 

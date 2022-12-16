@@ -80,7 +80,7 @@ paths:
                     {
                       "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_api_token",
                       "success": true,
-                      "result": "API_TOKEN",
+                      "result": { "token": "API_TOKEN" },
                     }
         "400":
           description: Parameter provided without value.
