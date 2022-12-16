@@ -1,3 +1,9 @@
+## 0.2.1 (2022-12-16)
+
+### Fix
+
+- add cookie config, optional api token in cookie, typing
+
 ## 0.2.0 (2022-12-16)
 
 ### Feat
