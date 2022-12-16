@@ -1,3 +1,9 @@
+## 0.2.0 (2022-12-16)
+
+### Feat
+
+- add get_user endpoint to also renew token, tidy exceptions
+
 ## 0.1.0 (2022-12-15)
 
 ### Feat
