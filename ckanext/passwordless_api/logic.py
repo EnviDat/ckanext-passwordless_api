@@ -4,8 +4,10 @@ import logging
 
 from ckan.common import config
 from ckan.lib import mailer
+from ckan.lib.api_token import decode as successful_jwt_decode
 from ckan.lib.navl.dictization_functions import DataError
 from ckan.lib.redis import connect_to_redis
+from ckan.logic import side_effect_free
 from ckan.plugins import toolkit
 from sqlalchemy.exc import InternalError as SQLAlchemyError
 
@@ -26,14 +28,17 @@ def request_reset_key(context, data_dict):
     """
     log.debug(f"Request reset key with params: {data_dict}")
 
+    if toolkit.c.user:
+        # Don't offer the reset if already logged in
+        log.warning("User already logged in")
+        raise toolkit.NotAuthorized("user already logged in, logout first")
+
     # Check email is present in POST data
-    try:
-        email = data_dict["email"]
-        email = email.lower()
-    except KeyError:
+    if not (email := data_dict.get("email")):
         raise toolkit.ValidationError({"email": "missing email"})
 
     # Check email is valid
+    email = email.lower()
     if not util.email_is_valid(email):
         raise toolkit.ValidationError({"email": "invalid email"})
 
@@ -110,7 +115,7 @@ def request_api_token(context, data_dict):
     log.debug(f"Requesting API token with params: {data_dict}")
 
     if toolkit.c.user:
-        # Don't offer the reset form if already logged in
+        # Don't offer the reset if already logged in
         log.warning("User already logged in")
         raise toolkit.NotAuthorized("user already logged in, logout first")
 
@@ -160,18 +165,22 @@ def revoke_api_token_no_auth(context, data_dict):
     Revoke API token for a user, without requiring auth.
 
     Useful for when user API token has expired already, but they wish to check
-    is revokation is possible (i.e. during logout - revoke if possible).
+    if revokation is possible (i.e. during logout - revoke if possible).
 
     data_dict contains API token value.
 
     Returns:
         dict: {message: 'success'}
     """
-    log.debug("Revoking API token is present.")
+    log.debug("Revoking API token if present.")
 
     # Check if parameters are present
     if not (api_token := data_dict.get("token")):
+        log.warning("Attempting to revoke API token, but none provided")
         raise toolkit.ValidationError({"token": "missing api token to revoke"})
+
+    if not successful_jwt_decode(api_token):
+        raise toolkit.ValidationError({"token": "failed to decode token, not valid"})
 
     try:
         toolkit.get_action("api_token_revoke")(
@@ -185,3 +194,51 @@ def revoke_api_token_no_auth(context, data_dict):
     except Exception as e:
         log.warning(f"Could not delete API token due to: {e}")
         return {"message": "failed"}
+
+
+@side_effect_free
+def get_current_user_and_renew_api_token(context, data_dict):
+    """
+    Return CKAN user and renew API token.
+
+    Uses the user_show core action to return the user, and renews the main API token.
+
+    Returns:
+        dict: {user: ckan_user_obj, token: api_token}
+    """
+    log.debug("start function get_current_user_and_renew_api_token")
+
+    if (user := context.get("user", "")) != "":
+        log.debug("User ID extracted from context user key")
+        user_id = user
+    elif user := context.get("auth_user_obj", None):
+        log.debug("User ID extracted from context auth_user_obj key")
+        user_id = user.id
+    else:
+        raise toolkit.NotAuthorized(
+            {"message": "API token is invalid or missing from Authorization header"}
+        )
+
+    try:
+        log.info(f"Getting user details with user_id: {user_id}")
+        user = toolkit.get_action("user_show")(
+            data_dict={
+                "id": user_id,
+            },
+        )
+
+    except Exception as e:
+        log.error(str(e))
+        log.warning(f"Could not find a user for ID: {user_id}")
+        return {"message": f"could not find a user for id: {user_id}"}
+
+    if user:
+        expiry = config.get("expire_api_token.default_lifetime", 3)
+        units = config.get("expire_api_token.default_unit", 86400)
+        token = util.renew_main_token(user_id, expiry, units)
+        return {
+            "user": user,
+            "token": token,
+        }
+
+    return {"message": "failed"}
