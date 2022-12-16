@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 info:
   title: ckanext-passwordless_api
   description: Extension to allow paswordless login to the CKAN API.
@@ -19,7 +19,41 @@ paths:
                   type: string
       responses:
         "200":
-          description: '{message: "success"}'
+          description: Send reset key to user via email.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_reset_key",
+                      "success": true,
+                      "result": { "message": "success" },
+                    }
+        "400":
+          description: Parameter provided without value.
+          content:
+            text/plain:
+              examples:
+                missing:
+                  value: "Bad request - JSON Error: Error decoding JSON data. Error: JSONDecodeError('Expecting value: line 1 column 1 (char 0)') JSON data extracted from the request: {}"
+        "409":
+          description: Invalid or missing parameter.
+          content:
+            application/json:
+              examples:
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_reset_key",
+                      "error":
+                        {
+                          "email": "invalid email",
+                          "__type": "Validation Error",
+                        },
+                      "success": false,
+                    }
+
   /passwordless_request_api_token:
     post:
       summary: Request API Token
@@ -37,7 +71,41 @@ paths:
                   type: string
       responses:
         "200":
-          description: The API token.
+          description: Returns API token for user.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_api_token",
+                      "success": true,
+                      "result": "API_TOKEN",
+                    }
+        "400":
+          description: Parameter provided without value.
+          content:
+            text/plain:
+              examples:
+                missing:
+                  value: "Bad request - JSON Error: Error decoding JSON data. Error: JSONDecodeError('Expecting value: line 1 column 1 (char 0)') JSON data extracted from the request: {}"
+        "409":
+          description: Invalid or missing parameter.
+          content:
+            application/json:
+              examples:
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_api_token",
+                      "error":
+                        {
+                          "email": "missing email",
+                          "__type": "Validation Error",
+                        },
+                      "success": false,
+                    }
+
   /passwordless_revoke_api_token:
     post:
       summary: Revoke API token.
@@ -53,4 +121,92 @@ paths:
                   type: string
       responses:
         "200":
-          description: '{message: "success"}'
+          description: Revokes API token, if present.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_revoke_api_token",
+                      "success": true,
+                      "result": { "message": "success" },
+                    }
+        "400":
+          description: Parameter provided without value.
+          content:
+            text/plain:
+              examples:
+                missing:
+                  value: "Bad request - JSON Error: Error decoding JSON data. Error: JSONDecodeError('Expecting value: line 1 column 1 (char 0)') JSON data extracted from the request: {}"
+        "409":
+          description: Invalid or missing parameter.
+          content:
+            application/json:
+              examples:
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_revoke_api_token",
+                      "error":
+                        {
+                          "token": "failed to decode token, not valid",
+                          "__type": "Validation Error",
+                        },
+                      "success": false,
+                    }
+
+  /passwordless_get_user:
+    get:
+      summary: Get user.
+      description: Get current user details & renew their API token.
+      responses:
+        "200":
+          description: Returns user details and renews API token.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_get_user",
+                      "success": true,
+                      "result":
+                        {
+                          "user":
+                            {
+                              "id": "USER_ID",
+                              "name": "USERNAME",
+                              "fullname": "USER_FULLNAME",
+                              "created": "2021-11-11T11:52:06.681420",
+                              "about": null,
+                              "activity_streams_email_notifications": false,
+                              "sysadmin": false,
+                              "state": "active",
+                              "image_url": null,
+                              "display_name": "USER_DISPLAY_NAME",
+                              "email_hash": "EMAIL_HASH",
+                              "number_created_packages": 1,
+                              "apikey": "USER_API_KEY(Deprecated)",
+                              "email": "USER_EMAIL",
+                              "image_display_url": null,
+                            },
+                          "token": "NEW_API_TOKEN",
+                        },
+                    }
+        "403":
+          description: User provided no authentication.
+          content:
+            application/json:
+              examples:
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_get_user",
+                      "error":
+                        {
+                          "__type": "Authorization Error",
+                          "message": "Access denied: {'message': 'API token is invalid or missing from Authorization header'}",
+                        },
+                      "success": false,
+                    }
