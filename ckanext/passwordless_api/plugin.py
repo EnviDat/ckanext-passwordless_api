@@ -76,6 +76,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 return response
 
             try:
+                # token present in both renew_api_token and get_user
                 token = load_json(response.data).get("result").get("token")
                 if not token:
                     return response

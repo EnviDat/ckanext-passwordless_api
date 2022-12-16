@@ -256,7 +256,7 @@ def get_current_user_and_renew_api_token(
         token_json = util.renew_main_token(user_id, expiry, units)
         return {
             "user": user,
-            "api_token": token_json.get("token"),
+            "token": token_json.get("token"),
         }
 
     return {"message": "failed"}
