@@ -1,15 +1,6 @@
 stages:
   - deploy
 
-workflow:
-  rules:
-    - if: >
-        ($CI_COMMIT_REF_NAME == "main"
-        || $CI_COMMIT_REF_NAME == "gh-pages")
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-      when: always
-
 pip-package:
   stage: deploy
   image: python:3.9
@@ -29,6 +20,13 @@ pip-package:
 pages:
   stage: deploy
   image: node:latest
+  rules:
+    - if: >
+        ($CI_COMMIT_REF_NAME == "main"
+        || $CI_COMMIT_REF_NAME == "gh-pages")
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
   script:
     - npm install -g redoc-cli
     - redoc-cli bundle -o public/index.html docs/openapi.yaml
