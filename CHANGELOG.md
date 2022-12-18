@@ -1,3 +1,13 @@
+## 0.3.0 (2022-12-18)
+
+### Feat
+
+- logic to allow revoke api token for current cookie (i.e. user logged in)
+
+### Fix
+
+- fix handling of cookie config booleans, add cookie path param
+
 ## 0.2.2 (2022-12-16)
 
 ### Fix
