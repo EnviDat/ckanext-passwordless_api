@@ -90,6 +90,43 @@ Optional variables can be set in your ckan.ini:
 - **<CKAN_HOST>/api/3/action/passwordless_get_user**
   - Description: Get user details, given their API token. Also resets and returns a new API token (i.e. renewal).
 
+## Using the cookie in an Authorization header
+
+If configured, the cookie containing an API token can't do much on it's own.
+
+It is possible to extract the cookie value using frontend JS and pass to the CKAN backend, but this makes your site vulnerable to XSS attacks.
+
+Instead the cookie should be stored in a secure way:
+
+- `samesite=Lax` with `domain=YOUR_DOMAIN` to help prevent CSRF.
+  - `samesite=Strict` is even more secure, but significantly impacts UX for your site.
+- `secure` to help prevent man-in-the-middle.
+- `httpOnly` to help prevent XSS.
+  - Setting this means the cookie can no longer be accessed from your JS code.
+
+Then a middleware must be used to convert the cookie value into a header than CKAN can interpret:
+
+**NGINX server example**
+(nginx is the default/recommended server to reverse proxy CKAN)
+(https://docs.ckan.org/en/latest/maintaining/installing/deployment.html)
+
+```nginx
+# Add the cookie-based API token to the request Authorization header
+# This is passed to the CKAN backend & read automatically by CKAN
+proxy_set_header 'Authorization' $cookie_${AUTH_COOKIE_NAME};
+
+# If using caching omit the cookie
+proxy_cache_bypass $cookie_${AUTH_COOKIE_NAME};
+proxy_no_cache $cookie_${AUTH_COOKIE_NAME};
+```
+
+**Apache server example**
+
+```apache
+SetEnvIf Cookie "(^|;\ *)${AUTH_COOKIE_NAME}=([^;\ ]+)" ckan_cookie_value=$2
+RequestHeader set Authorization "%{ckan_cookie_value}e"
+```
+
 ## Notes
 
 - It is also recommended to disable access to the API via cookie, to help prevent CSRF:
