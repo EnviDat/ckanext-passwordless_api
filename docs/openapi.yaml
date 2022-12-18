@@ -106,6 +106,31 @@ paths:
                       "success": false,
                     }
 
+  /passwordless_revoke_api_token(cookie):
+    get:
+      summary: Revoke API token.
+      description: If logged in, revoke API token used during endpoint call.
+      responses:
+        "200":
+          description: Revokes API key if available, else silently fails.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_revoke_api_token",
+                      "success": true,
+                      "result": { "message": "success" },
+                    }
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_revoke_api_token",
+                      "success": true,
+                      "result": { "message": "failed" },
+                    }
+
   /passwordless_revoke_api_token:
     post:
       summary: Revoke API token.

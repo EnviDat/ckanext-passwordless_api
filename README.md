@@ -38,31 +38,34 @@ Based on work by @espona (Lucia Espona Pernas) for ckanext-passwordless (https:/
 Optional variables can be set in your ckan.ini:
 
 - **passwordless_api.guidelines_url**
-  Description: A link to your website guidelines.
-  Default: None, not included.
+  - Description: A link to your website guidelines.
+  - Default: None, not included.
 - **passwordless_api.policies_url**
-  Description: A link to your website policies.
-  Default: None, not included.
+  - Description: A link to your website policies.
+  - Default: None, not included.
 - **passwordless_api.welcome_template**
-  Description: Path to welcome template to render as html email.
-  Default: uses default template.
+  - Description: Path to welcome template to render as html email.
+  - Default: uses default template.
 - **passwordless_api.reset_key_template**
-  Description: Path to reset key template to render as html email
-  Default: uses default template.
+  - Description: Path to reset key template to render as html email
+  - Default: uses default template.
 - **passwordless_api.cookie_name**
-  Description: Set to place the API token in a cookie, with given name.
-  The cookie will default to `secure`, `httpOnly`, `samesite: Lax`.
-  Default: None, no cookie used.
+  - Description: Set to place the API token in a cookie, with given name.
+    The cookie will default to `secure`, `httpOnly`, `samesite: Lax`.
+  - Default: None, no cookie used.
 - **passwordless_api.cookie_domain**
-  Description: The domain for samesite to respect, required if cookie set.
-  Default: None.
+  - Description: The domain for samesite to respect, required if cookie set.
+  - Default: None.
 - **passwordless_api.cookie_samesite**
-  Description: To change the cookie samesite value to `Strict`.
-  Only enable this if you know what you are doing.
-  Default: None, samesite value is set to `Lax`.
+  - Description: To change the cookie samesite value to `Strict`.
+    Only enable this if you know what you are doing.
+  - Default: None, samesite value is set to `Lax`.
 - **passwordless_api.cookie_http_only**
-  Description: Use a httpOnly cookie, recommended.
-  Default: true.
+  - Description: Use a httpOnly cookie, recommended.
+  - Default: true.
+- **passwordless_api.cookie_path**
+  - Description: Set a specific path to use the cookie, e.g. `/api`.
+  - Default: `/` (all paths).
 
 ## Endpoints
 
@@ -82,6 +85,8 @@ Optional variables can be set in your ckan.ini:
 
 **GET**
 
+- **<CKAN_HOST>/api/3/action/passwordless_revoke_api_token**
+  - Description: If logged in, revoke the current API token.
 - **<CKAN_HOST>/api/3/action/passwordless_get_user**
   - Description: Get user details, given their API token. Also resets and returns a new API token (i.e. renewal).
 
