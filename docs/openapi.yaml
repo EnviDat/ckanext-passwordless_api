@@ -108,7 +108,7 @@ paths:
 
   /passwordless_revoke_api_token(cookie):
     get:
-      summary: Revoke API token.
+      summary: Revoke API token
       description: If logged in, revoke API token used during endpoint call.
       responses:
         "200":
@@ -133,7 +133,7 @@ paths:
 
   /passwordless_revoke_api_token:
     post:
-      summary: Revoke API token.
+      summary: Revoke API token
       description: Revoke API token for a user, without requiring auth.
       requestBody:
         required: true
@@ -183,7 +183,7 @@ paths:
 
   /passwordless_get_user:
     get:
-      summary: Get user.
+      summary: Get user
       description: Get current user details & renew their API token.
       responses:
         "200":
