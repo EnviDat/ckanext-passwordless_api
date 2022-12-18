@@ -171,6 +171,7 @@ def request_api_token(
     return util.renew_main_token(user_id, expiry, units)
 
 
+@side_effect_free
 def revoke_api_token_no_auth(
     context,  #: Context,
     data_dict,  #: DataDict
@@ -182,33 +183,51 @@ def revoke_api_token_no_auth(
     if revokation is possible (i.e. during logout - revoke if possible).
 
     Args:
-        data_dict.token (str): Value of API token to revoke.
+        data_dict.token (str, optional): Value of API token to revoke.
 
     Returns:
         dict: {message: 'success'}
     """
     log.debug("Revoking API token if present.")
 
-    # Check if parameters are present
-    if not (api_token := data_dict.get("token")):
-        log.warning("Attempting to revoke API token, but none provided")
-        raise toolkit.ValidationError({"token": "missing api token to revoke"})
+    # User cookie / logged in
+    if (user := context.get("user", "")) != "":
+        log.debug("User ID extracted from context user key")
+        user_id = user
+    elif user := context.get("auth_user_obj", None):
+        log.debug("User ID extracted from context auth_user_obj key")
+        user_id = user.id
 
-    if not successful_jwt_decode(api_token):
-        raise toolkit.ValidationError({"token": "failed to decode token, not valid"})
+    else:
+        # Attempt revoke provided token via POST
+        if not (api_token := data_dict.get("token")):
+            log.warning("Attempting to revoke API token, but none provided")
+            raise toolkit.ValidationError({"token": "missing api token to revoke"})
 
-    try:
-        toolkit.get_action("api_token_revoke")(
-            context={"ignore_auth": True},
-            data_dict={
-                "token": api_token,
-            },
-        )
+        if not successful_jwt_decode(api_token):
+            raise toolkit.ValidationError(
+                {"token": "failed to decode token, not valid"}
+            )
+
+        try:
+            toolkit.get_action("api_token_revoke")(
+                context={"ignore_auth": True},
+                data_dict={
+                    "token": api_token,
+                },
+            )
+            return {"message": "success"}
+
+        except Exception as e:
+            log.warning(f"Could not delete API token due to: {e}")
+            return {"message": "failed"}
+
+    # Renew with 1 second expiry
+    api_token = util.renew_main_token(user_id, 1, 60)
+    if api_token:
         return {"message": "success"}
 
-    except Exception as e:
-        log.warning(f"Could not delete API token due to: {e}")
-        return {"message": "failed"}
+    return {"message": "failed"}
 
 
 @side_effect_free
