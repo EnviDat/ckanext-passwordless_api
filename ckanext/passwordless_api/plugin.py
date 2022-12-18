@@ -47,10 +47,14 @@ class PasswordlessAPIPlugin(SingletonPlugin):
 
             self.cookie_name = cookie_name
             self.cookie_domain = cookie_domain
-            self.cookie_http_only = config.get(
-                "passwordless_api.cookie_http_only", True
+            self.cookie_path = config.get("passwordless_api.cookie_path", "/")
+            self.cookie_http_only = bool(
+                load_json(config.get("passwordless_api.cookie_http_only", "true"))
             )
             self.cookie_samesite = config.get("passwordless_api.cookie_samesite", "Lax")
+            self.cookie_secure = bool(
+                load_json(config.get("passwordless_api.cookie_secure", "true"))
+            )
             token_expiry = int(config.get("expire_api_token.default_lifetime", 3))
             token_units = int(config.get("expire_api_token.default_unit", 86400))
             self.cookie_expiry = token_expiry * token_units
@@ -87,7 +91,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 "Adding cookie to response with vars: "
                 f"key={self.cookie_name} | value={token} | "
                 f"max_age={self.cookie_expiry} | domain={self.cookie_domain} | "
-                f"secure={True} | httponly={self.cookie_http_only} | "
+                f"secure={self.cookie_secure} | httponly={self.cookie_http_only} | "
                 f"samesite={self.cookie_samesite}"
             )
             response.set_cookie(
@@ -95,9 +99,10 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 value=token,
                 max_age=self.cookie_expiry,
                 domain=self.cookie_domain,
-                secure=True,
+                secure=self.cookie_secure,
                 httponly=self.cookie_http_only,
                 samesite=self.cookie_samesite,
+                path=self.cookie_path,
             )
             return response
 
