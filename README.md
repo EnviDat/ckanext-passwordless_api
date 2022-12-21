@@ -33,6 +33,12 @@ By using API tokens from CKAN core (>2.9), this plugin provides an authenticatio
 
 Based on work by @espona (Lucia Espona Pernas) for ckanext-passwordless (https://github.com/EnviDat/ckanext-passwordless).
 
+## Install
+
+```bash
+pip install ckanext-passwordless-api
+```
+
 ## Config
 
 Optional variables can be set in your ckan.ini:
