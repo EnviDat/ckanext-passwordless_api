@@ -1,3 +1,9 @@
+## 0.3.1 (2022-12-21)
+
+### Fix
+
+- pdm bundling not including ckanext dir for wheel/dist
+
 ## 0.3.0 (2022-12-18)
 
 ### Feat
