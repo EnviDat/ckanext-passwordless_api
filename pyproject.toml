@@ -33,7 +33,7 @@ build-backend = "pdm.pep517.api"
 
 [tool.pdm]
 includes = ["ckanext"]
-source-includes = ["ckanext", "CHANGELOG.md", "LICENSE", "README.md"]
+source-includes = ["ckanext/passwordless_api/tests", "CHANGELOG.md"]
 version = {from = "ckanext/passwordless_api/__version__.py"}
 
 [[tool.pdm.source]]
