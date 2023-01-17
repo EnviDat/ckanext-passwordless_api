@@ -94,7 +94,9 @@ Optional variables can be set in your ckan.ini:
 - **<CKAN_HOST>/api/3/action/passwordless_revoke_api_token**
   - Description: If logged in, revoke the current API token.
 - **<CKAN_HOST>/api/3/action/passwordless_get_user**
-  - Description: Get user details, given their API token. Also resets and returns a new API token (i.e. renewal).
+  - Description: Get user details, given their API token.
+    Also resets and returns a new API token (i.e. renewal).
+    Fails silently if the user is not logged in.
 
 ## Using the cookie in an Authorization header
 

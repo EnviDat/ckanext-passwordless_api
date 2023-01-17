@@ -219,19 +219,9 @@ paths:
                           "token": "NEW_API_TOKEN",
                         },
                     }
-        "403":
-          description: User provided no authentication.
-          content:
-            application/json:
-              examples:
                 fail:
                   value:
                     {
-                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_get_user",
-                      "error":
-                        {
-                          "__type": "Authorization Error",
-                          "message": "Access denied: {'message': 'API token is invalid or missing from Authorization header'}",
-                        },
-                      "success": false,
+                      "success": true,
+                      "message": "API token is invalid or missing from Authorization header",
                     }
