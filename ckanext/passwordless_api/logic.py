@@ -252,9 +252,9 @@ def get_current_user_and_renew_api_token(
         log.debug("User ID extracted from context auth_user_obj key")
         user_id = user.id
     else:
-        raise toolkit.NotAuthorized(
-            {"message": "API token is invalid or missing from Authorization header"}
-        )
+        return {
+            "message": "API token is invalid or missing from Authorization header",
+        }
 
     try:
         log.info(f"Getting user details with user_id: {user_id}")
