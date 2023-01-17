@@ -1,3 +1,9 @@
+## 0.3.2 (2023-01-17)
+
+### Fix
+
+- allow silent fail of get_user endpoint, preventing 403 browser cors error
+
 ## 0.3.1 (2022-12-21)
 
 ### Fix
