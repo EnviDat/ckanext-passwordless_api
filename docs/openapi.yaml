@@ -106,6 +106,62 @@ paths:
                       "success": false,
                     }
 
+  /passwordless_request_api_token_azure_ad:
+    post:
+      summary: Request API Token (Azure)
+      description: Get API token for a user, if Azure AD auth code valid.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                auth_code:
+                  type: string
+                redirect_uri:
+                  type: string
+                state:
+                  type: string
+      responses:
+        "200":
+          description: Returns API token for user.
+          content:
+            application/json:
+              examples:
+                success:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_api_token",
+                      "success": true,
+                      "result": { "token": "API_TOKEN" },
+                    }
+        "400":
+          description: Parameter provided without value.
+          content:
+            text/plain:
+              examples:
+                missing:
+                  value: "Bad request - JSON Error: Error decoding JSON data. Error: JSONDecodeError('Expecting value: line 1 column 1 (char 0)') JSON data extracted from the request: {}"
+        "409":
+          description: Invalid or missing parameter.
+          content:
+            application/json:
+              examples:
+                fail:
+                  value:
+                    {
+                      "help": "http://localhost:8989/api/3/action/help_show?name=passwordless_request_api_token",
+                      "error":
+                        {
+                          "email": "missing email",
+                          "__type": "Validation Error",
+                        },
+                      "success": false,
+                    }
+
   /passwordless_revoke_api_token(cookie):
     get:
       summary: Revoke API token
