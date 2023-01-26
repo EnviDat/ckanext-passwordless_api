@@ -1,3 +1,9 @@
+## 0.4.0 (2023-01-26)
+
+### Feat
+
+- endpoint for verifying azure ad auth code, config param validation
+
 ## 0.3.2 (2023-01-17)
 
 ### Fix
