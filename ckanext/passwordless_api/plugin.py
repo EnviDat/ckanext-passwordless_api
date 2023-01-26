@@ -8,6 +8,7 @@ from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 from ckanext.passwordless_api.logic import (
     get_current_user_and_renew_api_token,
     request_api_token,
+    request_api_token_azure_ad,
     request_reset_key,
     revoke_api_token_no_auth,
 )
@@ -59,12 +60,28 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             token_units = int(config.get("expire_api_token.default_unit", 86400))
             self.cookie_expiry = token_expiry * token_units
 
+        # Check Azure AD config
+        azure_ad_tenant_id = config.get("passwordless_api.azure_ad_tenant_id", None)
+        azure_ad_client_id = config.get("passwordless_api.azure_ad_client_id", None)
+        azure_ad_client_secret = config.get(
+            "passwordless_api.azure_ad_client_secret", None
+        )
+        if any([azure_ad_tenant_id, azure_ad_client_id, azure_ad_client_secret]):
+            if None in (azure_ad_tenant_id, azure_ad_client_id, azure_ad_client_secret):
+                err_str = (
+                    "all passwordless_api.azure_ad_xxx settings are required "
+                    "if one has been set"
+                )
+                log.error(err_str)
+                raise toolkit.ObjectNotFound(err_str)
+
     # IActions
     def get_actions(self):
         """Actions to be accessible via the API."""
         return {
             "passwordless_request_reset_key": request_reset_key,
             "passwordless_request_api_token": request_api_token,
+            "passwordless_request_api_token_azure_ad": request_api_token_azure_ad,
             "passwordless_revoke_api_token": revoke_api_token_no_auth,
             "passwordless_get_user": get_current_user_and_renew_api_token,
         }
