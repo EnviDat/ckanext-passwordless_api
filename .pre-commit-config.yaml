@@ -6,13 +6,6 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
-  # Autoupdate: Python code
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.31.1
-    hooks:
-      - id: pyupgrade
-        args: [--py39-plus]
-
   # Autoformat: Python code
   - repo: https://github.com/psf/black
     rev: 22.3.0
@@ -20,11 +13,13 @@ repos:
       - id: black
         args: [--target-version=py39]
 
-  # Autoformat: Python imports
-  - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+  # Lint / autoformat: Python code
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    # Ruff version.
+    rev: "v0.0.248"
     hooks:
-      - id: isort
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
 
   # Autoformat: YAML, JSON, Markdown, etc.
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -33,14 +28,6 @@ repos:
       - id: prettier
         args:
           ["--ignore-unknown", "--no-error-on-unmatched-pattern", "!chart/**"]
-
-  # Lint: Python
-  - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
-    hooks:
-      - id: flake8
-        args: ["--max-line-length=88"]
-        exclude: ^(app/__version__.py|migrations)
 
   # Lint: Markdown
   - repo: https://github.com/igorshubovych/markdownlint-cli
