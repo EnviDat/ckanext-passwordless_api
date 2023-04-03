@@ -1,3 +1,9 @@
+## 1.0.1 (2023-04-03)
+
+### Fix
+
+- pin requests dep =>2.25.1 for compatibility
+
 ## 1.0.0 (2023-04-03)
 
 ### Fix
