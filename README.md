@@ -33,6 +33,13 @@ By using API tokens from CKAN core (>2.9), this plugin provides an authenticatio
 
 Based on work by @espona (Lucia Espona Pernas) for ckanext-passwordless (https://github.com/EnviDat/ckanext-passwordless).
 
+A second login flow is also supported, using Azure AD:
+
+1. User logs in with authorization code flow in frontend (@azure/msal-browser or similar).
+2. Azure token is passed to azure specific endpoint.
+3. Token is validated and API token for CKAN is returned.
+4. The API token should then be included in Authorization headers from the frontend --> CKAN calls.
+
 ## Install
 
 ```bash
