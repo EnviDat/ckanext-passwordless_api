@@ -17,8 +17,7 @@ log = logging.getLogger(__name__)
 
 
 class PasswordlessAPIPlugin(SingletonPlugin):
-    """
-    PasswordlessPlugin.
+    """PasswordlessPlugin.
 
     Plugin to add endpoints that allow passwordless login via email.
     """
@@ -59,21 +58,6 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             token_expiry = int(config.get("expire_api_token.default_lifetime", 3))
             token_units = int(config.get("expire_api_token.default_unit", 86400))
             self.cookie_expiry = token_expiry * token_units
-
-        # Check Azure AD config
-        azure_ad_tenant_id = config.get("passwordless_api.azure_ad_tenant_id", None)
-        azure_ad_client_id = config.get("passwordless_api.azure_ad_client_id", None)
-        azure_ad_client_secret = config.get(
-            "passwordless_api.azure_ad_client_secret", None
-        )
-        if any([azure_ad_tenant_id, azure_ad_client_id, azure_ad_client_secret]):
-            if None in (azure_ad_tenant_id, azure_ad_client_id, azure_ad_client_secret):
-                err_str = (
-                    "all passwordless_api.azure_ad_xxx settings are required "
-                    "if one has been set"
-                )
-                log.error(err_str)
-                raise toolkit.ObjectNotFound(err_str)
 
     # IActions
     def get_actions(self):
