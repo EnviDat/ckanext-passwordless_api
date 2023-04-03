@@ -9,7 +9,8 @@ from ckan.lib.navl.dictization_functions import DataError
 from ckan.lib.redis import connect_to_redis
 from ckan.logic import side_effect_free
 from ckan.plugins import toolkit
-from ckan.types import Context, DataDict
+
+# from ckan.types import Context, DataDict
 from requests import get as get_url
 from sqlalchemy.exc import InternalError as SQLAlchemyError
 
@@ -20,8 +21,8 @@ log = logging.getLogger(__name__)
 
 
 def request_reset_key(
-    context: Context,
-    data_dict: DataDict,
+    context,  #: Context,
+    data_dict,  #: DataDict,
 ):
     """Request a reset key (login token) to be sent by email.
 
@@ -114,8 +115,8 @@ def _create_user(email):
 
 
 def request_api_token(
-    context: Context,
-    data_dict: DataDict,
+    context,  #: Context,
+    data_dict,  #: DataDict,
 ):
     """Get API token for a user, if reset key valid.
 
@@ -177,8 +178,8 @@ def request_api_token(
 
 
 def request_api_token_azure_ad(
-    context: Context,
-    data_dict: DataDict,
+    context,  #: Context,
+    data_dict,  #: DataDict,
 ):
     """Get API token for a user, if valid Azure AD token provided.
 
@@ -247,8 +248,8 @@ def request_api_token_azure_ad(
 
 @side_effect_free
 def revoke_api_token_no_auth(
-    context: Context,
-    data_dict: DataDict,
+    context,  #: Context,
+    data_dict,  #: DataDict,
 ):
     """Revoke API token for a user, without requiring auth.
 
@@ -307,8 +308,8 @@ def revoke_api_token_no_auth(
 
 @side_effect_free
 def get_current_user_and_renew_api_token(
-    context: Context,
-    data_dict: DataDict,
+    context,  #: Context,
+    data_dict,  #: DataDict,
 ):
     """Return CKAN user and renew API token.
 
