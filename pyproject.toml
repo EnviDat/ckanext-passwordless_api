@@ -5,7 +5,9 @@ description = "Extension to allow paswordless login to the CKAN API"
 authors = [
     {name = "Sam Woodcock", email = "sam.woodcock@protonmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "requests>=2.28.2",
+]
 requires-python = ">=3.8"
 readme = "README.md"
 license = {text = "MIT"}
@@ -59,3 +61,26 @@ version_files = [
 profile = "black"
 atomic = true
 known_first_party = ["ckanext"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+select = ["I", "E", "W", "D", "B", "F", "N", "Q"]
+ignore = ["N805", "B008"]
+exclude = [
+    ".git",
+    ".ruff_cache",
+    ".vscode",
+    "__pypackages__",
+    "build",
+    "dist",
+    "migrations",
+    "passwordless_api/__version__.py",
+]
+[tool.ruff.pydocstyle]
+convention = "google"
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
