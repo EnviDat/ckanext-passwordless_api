@@ -23,8 +23,7 @@ def email_is_valid(email: str):
 
 
 def get_user_from_email(email: str):
-    """
-    Get the CKAN user with the given email address.
+    """Get the CKAN user with the given email address.
 
     Returns:
         dict: A CKAN user dict.
@@ -70,8 +69,7 @@ def get_new_username(email: str):
 
 
 def generate_user_name(email: str, offset: int = 0):
-    """
-    Generate a user name for the given email address.
+    """Generate a user name for the given email address.
 
     Offset should be unique.
     """
@@ -102,8 +100,7 @@ def generate_password():
 
 
 def renew_main_token(user_id: str, expiry: int, units: int):
-    """
-    Revoke and re-create API token named 'main' for a user.
+    """Revoke and re-create API token named 'main' for a user.
 
     Args:
         user_id (str): User ID.

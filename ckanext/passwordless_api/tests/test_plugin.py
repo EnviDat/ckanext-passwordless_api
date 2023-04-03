@@ -1,5 +1,4 @@
-"""
-Tests for plugin.py.
+"""Tests for plugin.py.
 
 Tests are written using the pytest library (https://docs.pytest.org), and you
 should read the testing guidelines in the CKAN docs:
