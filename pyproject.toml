@@ -66,7 +66,6 @@ known_first_party = ["ckanext"]
 target-version = "py38"
 line-length = 88
 select = ["I", "E", "W", "D", "B", "F", "N", "Q"]
-ignore = ["N805", "B008"]
 exclude = [
     ".git",
     ".ruff_cache",
@@ -75,7 +74,7 @@ exclude = [
     "build",
     "dist",
     "migrations",
-    "passwordless_api/__version__.py",
+    "ckanext/passwordless_api/__version__.py",
 ]
 [tool.ruff.pydocstyle]
 convention = "google"
