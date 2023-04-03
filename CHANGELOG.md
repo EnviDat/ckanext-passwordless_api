@@ -1,3 +1,9 @@
+## 1.0.2 (2023-04-03)
+
+### Fix
+
+- remove ckan.types until upgrade 2.10
+
 ## 1.0.1 (2023-04-03)
 
 ### Fix
