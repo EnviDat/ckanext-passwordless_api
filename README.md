@@ -86,11 +86,9 @@ Optional variables can be set in your ckan.ini:
   - Param1: email (str).
   - Param2: key (str).
 - **<CKAN_HOST>/api/3/action/passwordless_request_api_token_azure_ad**
-  - Description: Request an API token, given the email and Azure AD auth code.
+  - Description: Request an API token, given the email and Azure AD token.
   - Param1: email (str).
-  - Param2: auth_code (str).
-  - Param3: redirect_uri (str).
-  - Param4: state (str).
+  - Param2: token (str).
 - **<CKAN_HOST>/api/3/action/passwordless_revoke_api_token**
   - Description: Revoke an API token.
   - Param1: token (str).
