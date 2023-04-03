@@ -1,3 +1,10 @@
+## 1.0.0 (2023-04-03)
+
+### Fix
+
+- validate azure ad token with azure /me, linting on logic
+- remove azure ad config params from plugin
+
 ## 0.4.0 (2023-01-26)
 
 ### Feat
