@@ -69,9 +69,11 @@ def get_new_username(email: str):
 
 
 def generate_user_name(email: str, offset: int = 0):
-    """Generate a user name for the given email address.
+    """
+    Generate a user name for the given email address.
 
     Offset should be unique.
+    Contains logic to handle
     """
     # unique_num = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
     max_len = 99
