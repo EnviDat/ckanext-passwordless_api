@@ -10,7 +10,7 @@
   <a href="https://pypistats.org/packages/ckanext-passwordless_api" target="_blank">
       <img src="https://img.shields.io/pypi/dm/ckanext-passwordless_api.svg" alt="Downloads">
   </a>
-  <a href="https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api/-/raw/main/LICENCE" target="_blank">
+  <a href="https://gitlabext.wsl.ch/EnviDat/ckanext-passwordless_api/-/raw/main/LICENSE" target="_blank">
       <img src="https://img.shields.io/github/license/EnviDat/ckanext-passwordless_api.svg" alt="Licence">
   </a>
 </div>
@@ -79,6 +79,12 @@ Optional variables can be set in your ckan.ini:
 - **passwordless_api.cookie_path**
   - Description: Set a specific path to use the cookie, e.g. `/api`.
   - Default: `/` (all paths).
+- **passwordless_api.anonymous_usernames**
+  - Description: Set to true to anonymise usernames when generated.
+  - Default: false.
+- **passwordless_api.anonymous_domain_exceptions**
+  - Description: Email domain exceptions that should not be anonymised, if enabled.
+  - Default: None.
 
 ## Endpoints
 
