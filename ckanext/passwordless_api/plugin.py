@@ -70,7 +70,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             "passwordless_get_user": get_current_user_and_renew_api_token,
         }
 
-    # IActions
+    # IMiddleware
     def make_middleware(self, app, config):
         """Create middleware for the Flask app."""
 
@@ -82,11 +82,10 @@ class PasswordlessAPIPlugin(SingletonPlugin):
 
             try:
                 # token present in both renew_api_token and get_user
-                token = load_json(response.data).get("result").get("token")
-                if not token:
+                if not (token := load_json(response.data).get("result").get("token")):
                     return response
-            except Exception:
-                return response
+            except Exception as e:
+                return e
 
             log.debug(
                 "Adding cookie to response with vars: "
