@@ -1,3 +1,16 @@
+## 1.1.0 (2023-05-30)
+
+### Feat
+
+- add option to anonymise usernames
+- add introspect endpoint, verify token only
+
+### Refactor
+
+- improve log message for when user is deleted
+- tweak to plugin init logic
+- correct link to license
+
 ## 1.0.2 (2023-04-03)
 
 ### Fix
