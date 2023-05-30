@@ -92,7 +92,7 @@ Optional variables can be set in your ckan.ini:
 
 - **<CKAN_HOST>/api/3/action/passwordless_request_reset_key**
   - Description: Request a login token for a given email.
-  - Creates user if they do not exist & sends welcome email.
+    - Creates user if they do not exist & sends welcome email.
   - Param1: email (str).
 - **<CKAN_HOST>/api/3/action/passwordless_request_api_token**
   - Description: Request an API token, given the email and login token (reset_key).
@@ -112,8 +112,13 @@ Optional variables can be set in your ckan.ini:
   - Description: If logged in, revoke the current API token.
 - **<CKAN_HOST>/api/3/action/passwordless_get_user**
   - Description: Get user details, given their API token.
-    Also resets and returns a new API token (i.e. renewal).
-    Fails silently if the user is not logged in.
+    - Also resets and returns a new API token (i.e. renewal).
+    - Fails silently if the user is not logged in.
+    - Use the core `user_show` action if refresh is not required.
+- **<CKAN_HOST>/api/3/action/passwordless_introspect**
+  - Description: Verify if the API token is valid for a user.
+    - This does not renew the token in the same call.
+    - Mostly useful for auth checking in microservice APIs.
 
 ## Using the cookie in an Authorization header
 

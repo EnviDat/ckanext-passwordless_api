@@ -277,3 +277,18 @@ paths:
                       "success": true,
                       "message": "API token is invalid or missing from Authorization header",
                     }
+
+  /introspect:
+    get:
+      summary: Validate token
+      description: Validate the current users API token.
+      responses:
+        "200":
+          description: True or False for is API token is valid.
+          content:
+            application/json:
+              examples:
+                success:
+                  value: true
+                fail:
+                  value: false
