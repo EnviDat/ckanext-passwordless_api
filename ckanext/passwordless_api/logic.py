@@ -66,7 +66,7 @@ def request_reset_key(
         # make sure is not deleted
         if user.state == "deleted":
             raise toolkit.ValidationError(
-                {"user": f"User with email {email} was deleted"}
+                {"user": f"User with email {email} was deleted already. Contact Admin."}
             )
         try:
             send_user_reset_key(user)
