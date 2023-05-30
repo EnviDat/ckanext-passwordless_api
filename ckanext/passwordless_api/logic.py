@@ -344,7 +344,7 @@ def get_current_user_and_renew_api_token(
         log.warning(f"Could not find a user for ID: {user_id}")
         return {"message": f"could not find a user for id: {user_id}"}
 
-    if user:
+    if _check_token_valid(context, data_dict):
         expiry = config.get("expire_api_token.default_lifetime", 3)
         units = config.get("expire_api_token.default_unit", 86400)
         token_json = util.renew_main_token(user_id, expiry, units)
@@ -354,3 +354,63 @@ def get_current_user_and_renew_api_token(
         }
 
     return {"message": "failed"}
+
+
+@side_effect_free
+def check_token_valid(
+    context,  #: Context,
+    data_dict,  #: DataDict,
+):
+    """Check if the token is valid and user is authenticated.
+
+    Allows for verifying user auth without renewing token.
+    Useful for verifying a token from microservices.
+
+    Returns:
+        bool: True if valid, False if not.
+    """
+    if _check_token_valid(context, data_dict):
+        return True
+
+    return False
+
+
+def _check_token_valid(
+    context,  #: Context,
+    data_dict,  #: DataDict,
+):
+    """Verify the JWT API token.
+
+    Returns:
+        bool: True if valid, False if not.
+    """
+    log.debug("start function _check_token_valid")
+
+    if (user_id := context.get("user", "")) != "":
+        log.debug("User ID extracted from context user key")
+    elif user_obj := context.get("auth_user_obj", None):
+        log.debug("User ID extracted from context auth_user_obj key")
+        user_id = user_obj.id
+    else:
+        return {
+            "message": "API token is invalid or missing from Authorization header",
+        }
+
+    user = None
+    try:
+        log.info(f"Getting user details with user_id: {user_id}")
+        user = toolkit.get_action("user_show")(
+            data_dict={
+                "id": user_id,
+            },
+        )
+
+    except Exception as e:
+        log.error(str(e))
+        log.warning(f"Could not find a user for ID: {user_id}")
+        return {"message": f"could not find a user for id: {user_id}"}
+
+    if user:
+        return True
+
+    return False

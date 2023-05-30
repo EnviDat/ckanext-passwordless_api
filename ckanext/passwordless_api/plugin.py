@@ -6,6 +6,7 @@ from json import loads as load_json
 from ckan.plugins import SingletonPlugin, implements, interfaces, toolkit
 
 from ckanext.passwordless_api.logic import (
+    check_token_valid,
     get_current_user_and_renew_api_token,
     request_api_token,
     request_api_token_azure_ad,
@@ -68,6 +69,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             "passwordless_request_api_token_azure_ad": request_api_token_azure_ad,
             "passwordless_revoke_api_token": revoke_api_token_no_auth,
             "passwordless_get_user": get_current_user_and_renew_api_token,
+            "passwordless_introspect": check_token_valid,
         }
 
     # IMiddleware
