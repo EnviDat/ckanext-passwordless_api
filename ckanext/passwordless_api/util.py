@@ -2,10 +2,12 @@
 
 import logging
 from datetime import datetime, timedelta
+from json import loads as load_json
 from re import match as regexmatch
 from uuid import uuid4
 
 from ckan import logic
+from ckan.common import config
 from ckan.lib.redis import connect_to_redis
 from ckan.model import User
 from ckan.plugins import toolkit
@@ -50,9 +52,24 @@ def get_user_from_email(email: str):
 
 def get_new_username(email: str):
     """Generate a new username and check does not exist."""
-    offset = 0
     email = email.lower()
-    username = generate_user_name(email)
+
+    anonymous_usernames = bool(
+        load_json(config.get("passwordless_api.anonymous_usernames", "false"))
+    )
+    domain_exceptions = config.get("passwordless_api.anonymous_domain_exceptions", "")
+
+    username = (
+        generate_user_name(email)
+        if not anonymous_usernames
+        else (
+            generate_user_name(email)
+            if not domain_exceptions or email.endswith(tuple(domain_exceptions))
+            else str(uuid4())
+        )
+    )
+
+    offset = 0
     while offset < 100000:
         try:
             toolkit.get_action("user_show")(
@@ -69,11 +86,9 @@ def get_new_username(email: str):
 
 
 def generate_user_name(email: str, offset: int = 0):
-    """
-    Generate a user name for the given email address.
+    """Generate a user name for the given email address.
 
     Offset should be unique.
-    Contains logic to handle
     """
     # unique_num = datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
     max_len = 99
