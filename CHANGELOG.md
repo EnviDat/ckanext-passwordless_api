@@ -1,3 +1,10 @@
+## 1.1.1 (2023-07-19)
+
+### Fix
+
+- welcome email logic
+- response error handling
+
 ## 1.1.0 (2023-05-30)
 
 ### Feat
