@@ -59,8 +59,10 @@ def request_reset_key(
 
     if not user:
         # A user with this email address doesn't yet exist in CKAN, so create one.
-        user = _create_user(email)
+        new_user_email = _create_user(email)
         log.debug(f"Created user {str(email)}")
+        user = util.get_user_from_email(new_user_email)
+        send_welcome_email(user)
 
     if user:
         # make sure is not deleted
@@ -86,7 +88,10 @@ def request_reset_key(
 
 
 def _create_user(email):
-    """Create a new user and send welcome email."""
+    """Create a new user and send welcome email.
+
+    Returns the user email.
+    """
     # first check temporary quota
     util.check_new_user_quota()
 
@@ -97,10 +102,9 @@ def _create_user(email):
             "name": util.get_new_username(email),
             "password": util.generate_password(),
         }
-        user = toolkit.get_action("user_create")(
+        user_dict = toolkit.get_action("user_create")(
             context={"ignore_auth": True}, data_dict=data_dict
         )
-        send_welcome_email(user)
     except SQLAlchemyError as error:
         exception_message = f"{error}"
         log.error(f"Failed to create user: {error}")
@@ -110,8 +114,12 @@ def _create_user(email):
             )
         else:
             raise DataError from error("Internal error creating a new user")
+    except Exception as e:
+        log.error(e)
+        log.error("Error creating new user")
+        raise Exception from e
 
-    return user
+    return user_dict.get("email")
 
 
 def request_api_token(
