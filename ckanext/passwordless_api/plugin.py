@@ -87,7 +87,9 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 if not (token := load_json(response.data).get("result").get("token")):
                     return response
             except Exception as e:
-                return e
+                # Required to bypass errors and continue loading
+                log.warning(f"passwordless token load error: {e}")
+                return response
 
             log.debug(
                 "Adding cookie to response with vars: "
