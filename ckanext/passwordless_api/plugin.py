@@ -85,6 +85,8 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             try:
                 # token already present in both renew_api_token and get_user
                 # simply return response with token
+                # also set direct_passthrough = False to avoid warnings
+                response.direct_passthrough = False
                 if not (token := load_json(response.data).get("result").get("token")):
                     return response
             except Exception:
