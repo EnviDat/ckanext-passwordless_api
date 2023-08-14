@@ -1,3 +1,10 @@
+## 1.1.3 (2023-08-14)
+
+### Fix
+
+- set response.direct_passthrough = False
+- remove log polution when no token in request
+
 ## 1.1.2 (2023-08-14)
 
 ### Refactor
