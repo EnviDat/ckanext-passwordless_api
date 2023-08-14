@@ -1,3 +1,9 @@
+## 1.1.2 (2023-08-14)
+
+### Refactor
+
+- remove init logic not required
+
 ## 1.1.1 (2023-07-19)
 
 ### Fix
