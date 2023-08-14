@@ -83,12 +83,13 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 return response
 
             try:
-                # token present in both renew_api_token and get_user
+                # token already present in both renew_api_token and get_user
+                # simply return response with token
                 if not (token := load_json(response.data).get("result").get("token")):
                     return response
-            except Exception as e:
+            except Exception:
                 # Required to bypass errors and continue loading
-                log.warning(f"passwordless token load error: {e}")
+                # Do not pollute logs
                 return response
 
             log.debug(
