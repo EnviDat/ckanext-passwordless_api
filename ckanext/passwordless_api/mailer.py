@@ -12,9 +12,7 @@ log = logging.getLogger(__name__)
 def send_user_reset_key(user):
     """Send the login token email."""
     mailer.create_reset_key(user)
-    if reset_key := user.reset_key:
-        # Strip b'' wrapping
-        reset_key = reset_key[2:-1]
+    reset_key = user.reset_key
     body = _get_user_reset_key_body(user.as_dict(), reset_key)
     subject = f"Access token: {reset_key}"
     log.debug(f"Sending user reset key to user: {str(user.email)}")
