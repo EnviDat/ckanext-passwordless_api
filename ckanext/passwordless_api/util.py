@@ -38,11 +38,9 @@ def get_user_from_email(email: str):
     # to return emails (email_hash is returned otherwise, with no matches)
     # action user_show also doesn't return the reset_key...
     # by_email returns .first() item
-    users = User.by_email(email)
+    user = User.by_email(email)
 
-    if users:
-        # as_dict() method on CKAN User object
-        user = users[0]
+    if user:
         log.debug(f"Returning user id ({user.id}) for email {email}.")
         return user
 
