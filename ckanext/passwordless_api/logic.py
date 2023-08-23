@@ -279,8 +279,10 @@ def revoke_api_token_no_auth(
         log.debug("User ID extracted from context user key")
         user_id = user
     elif user := context.get("auth_user_obj", None):
-        log.debug("User ID extracted from context auth_user_obj key")
-        user_id = user.id
+        # Handle AnonymousUser in CKAN 2.10
+        if user.name != "":
+            log.debug("User ID extracted from context auth_user_obj key")
+            user_id = user.id
 
     else:
         # Attempt revoke provided token via POST
@@ -332,6 +334,11 @@ def get_current_user_and_renew_api_token(
         log.debug("User ID extracted from context user key")
         user_id = user
     elif user := context.get("auth_user_obj", None):
+        # Handle AnonymousUser in CKAN 2.10
+        if user.name == "":
+            return {
+                "message": "API token is invalid or missing from Authorization header",
+            }
         log.debug("User ID extracted from context auth_user_obj key")
         user_id = user.id
     else:
@@ -397,6 +404,11 @@ def _check_token_valid(
     if (user_id := context.get("user", "")) != "":
         log.debug("User ID extracted from context user key")
     elif user_obj := context.get("auth_user_obj", None):
+        # Handle AnonymousUser in CKAN 2.10
+        if user_obj.name == "":
+            return {
+                "message": "API token is invalid or missing from Authorization header",
+            }
         log.debug("User ID extracted from context auth_user_obj key")
         user_id = user_obj.id
     else:
