@@ -1,3 +1,9 @@
+## 1.1.4 (2023-08-23)
+
+### Fix
+
+- ckan 2.10 support with AnonymousUser
+
 ## 1.1.3 (2023-08-14)
 
 ### Fix
