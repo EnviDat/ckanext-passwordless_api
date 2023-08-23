@@ -1,3 +1,9 @@
+## 1.1.6 (2023-08-23)
+
+### Fix
+
+- ckan User.by_email return .first()
+
 ## 1.1.5 (2023-08-23)
 
 ### Fix
