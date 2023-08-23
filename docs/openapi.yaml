@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: ckanext-passwordless_api
   description: Extension to allow paswordless login to the CKAN API.
-  version: 1.1.6
+  version: 1.1.7
 paths:
   /passwordless_request_reset_key:
     post:

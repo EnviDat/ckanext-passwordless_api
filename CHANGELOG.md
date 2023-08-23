@@ -1,3 +1,9 @@
+## 1.1.7 (2023-08-23)
+
+### Fix
+
+- reset_key not longer has b'' wrapping (5d9cf4c)
+
 ## 1.1.6 (2023-08-23)
 
 ### Fix
