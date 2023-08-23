@@ -147,7 +147,7 @@ def request_api_token(
     # Check if parameters are present
     if not (email := data_dict.get("email")):
         raise toolkit.ValidationError({"email": "missing email"})
-    if not (orig_key := data_dict.get("key")):
+    if not (key := data_dict.get("key")):
         raise toolkit.ValidationError({"key": "missing token"})
     # Check email valid
     email = email.lower()
@@ -159,20 +159,14 @@ def request_api_token(
             {"email": "email does not correspond to a registered user"}
         )
 
-    # Validate key
-    if len(orig_key) <= 32 and not orig_key.startswith("b'"):
-        key = f"b'{orig_key}'"
-    else:
-        key = orig_key
-
     user_id = user.id
-    log.debug(f"User id: {user_id} ({orig_key}) => {key}")
+    log.debug(f"User id: {user_id} | Key: {key}")
 
     # Check provided key is valid
     if not user or not mailer.verify_reset_link(user, key):
         raise toolkit.ValidationError({"key": "token provided is not valid"})
 
-    # Recreate reset_key in db
+    # Invalidate reset_key in db
     mailer.create_reset_key(user)
 
     # delete attempts from Redis
