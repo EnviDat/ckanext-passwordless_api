@@ -1,3 +1,9 @@
+## 1.1.5 (2023-08-23)
+
+### Fix
+
+- inherit IMiddleware to remove make_error_log_middleware
+
 ## 1.1.4 (2023-08-23)
 
 ### Fix
