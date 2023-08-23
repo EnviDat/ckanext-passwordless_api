@@ -25,7 +25,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
 
     implements(interfaces.IConfigurer)
     implements(interfaces.IActions)
-    implements(interfaces.IMiddleware)
+    implements(interfaces.IMiddleware, inherit=True)
 
     # IConfigurer
     def update_config(self, config):
@@ -113,8 +113,4 @@ class PasswordlessAPIPlugin(SingletonPlugin):
             )
             return response
 
-        return app
-
-    def make_error_log_middleware(self, app, config):
-        """Create error log middleware for the Flask app."""
         return app
