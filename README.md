@@ -85,7 +85,7 @@ Optional variables can be set in your ckan.ini:
 - **passwordless_api.anonymous_domain_exceptions**
   - Description: Email domain exceptions that should not be anonymised, if enabled.
   - Default: None.
-  **passwordless_api.cookie_secure**
+- **passwordless_api.cookie_secure**
   - Description: A Secure cookie is only sent to the server with an encrypted request over the HTTPS
     protocol. This option can be removed for production environment.
   - Default: true (FOR TEST/DEV SETUP, VALUE NEEDS TO BE 'false'. 
