@@ -85,6 +85,11 @@ Optional variables can be set in your ckan.ini:
 - **passwordless_api.anonymous_domain_exceptions**
   - Description: Email domain exceptions that should not be anonymised, if enabled.
   - Default: None.
+  **passwordless_api.cookie_secure**
+  - Description: A Secure cookie is only sent to the server with an encrypted request over the HTTPS
+    protocol. This option can be removed for production environment.
+  - Default: true (FOR TEST/DEV SETUP, VALUE NEEDS TO BE 'false'. 
+    'True' indicates cookie is sent to the server only when a request is made with the https: scheme.)
 
 ## Endpoints
 
@@ -139,6 +144,7 @@ Then a middleware must be used to convert the cookie value into a header than CK
 **NGINX server example**
 (nginx is the default/recommended server to reverse proxy CKAN)
 (https://docs.ckan.org/en/latest/maintaining/installing/deployment.html)
+**AUTH_COOKIE_NAME is set in docker-compose.yml. The value must be set to 'envidat', cookie validation fails otherwise.**
 
 ```nginx
 # Add the cookie-based API token to the request Authorization header
