@@ -10,6 +10,7 @@ from ckan import logic
 from ckan.common import config
 from ckan.lib.redis import connect_to_redis
 from ckan.model import User
+from ckan.model import ApiToken
 from ckan.plugins import toolkit
 from dateutil import parser as dateparser
 
@@ -46,6 +47,29 @@ def get_user_from_email(email: str):
 
     log.warning(f"No matching users found for email: {email}")
     return None
+
+def get_user_from_token(token: str):
+    """Get the CKAN user with the given token.
+
+    Returns:
+        dict: A CKAN user dict.
+    """
+    
+    log.debug(f"Getting user id for token: {token}")
+
+    # Workaround as action user_list requires sysadmin priviledge
+    # to return emails (email_hash is returned otherwise, with no matches)
+    # action user_show also doesn't return the reset_key...
+    # by_email returns .first() item
+    user = ApiToken.get(id=token)
+
+    if user:
+        log.debug(f"Returning user id ({user.id}) for token {token}.")
+        return user
+
+    log.warning(f"No matching users found for token: {token}")
+    return None
+
 
 
 def get_new_username(email: str):

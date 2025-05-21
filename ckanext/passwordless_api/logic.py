@@ -330,11 +330,17 @@ def get_current_user_and_renew_api_token(
     elif user := context.get("auth_user_obj", None):
         # Handle AnonymousUser in CKAN 2.10
         if user.name == "":
-            return {
-                "message": "API token is invalid or missing from Authorization header",
-            }
-        log.debug("User ID extracted from context auth_user_obj key")
-        user_id = user.id
+            user = util.get_user_from_token(data_dict['token'])
+            log.debug(f"User obj returned: ({user}).")
+            if user.user_id == "":
+                return {
+                    "message": "API token is invalid or missing from Authorization header",
+                }
+            else:
+                user_id = user.user_id
+        else:
+            log.debug("User ID extracted from context auth_user_obj key")
+            user_id = user.id
     else:
         return {
             "message": "API token is invalid or missing from Authorization header",
