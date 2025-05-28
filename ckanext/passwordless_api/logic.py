@@ -333,10 +333,10 @@ def get_current_user_and_renew_api_token(
         user_id = user
     elif user := context.get("auth_user_obj", None):
         # Handle AnonymousUser in CKAN 2.10
-        if user.name == "":
+        if user.id == "":
             if 'user' in data_dict and data_dict['user']:
                 user_id = data_dict['user']
-                log.debug(f"User id obtained returned: ({user_id}).")
+                log.debug(f"User id obtained returned: ({data_dict['user']}).")
             elif 'token' in data_dict and data_dict['token']:
                 user = util.get_user_from_token(data_dict['token'])
                 log.debug(f"User obj returned: ({user}).")
@@ -346,6 +346,10 @@ def get_current_user_and_renew_api_token(
                     }
                 else:
                     user_id = user.user_id
+            else:
+                return {
+                    "message": "Wierd case with no user!!!",
+                }
         else:
             log.debug("User ID extracted from context auth_user_obj key")
             user_id = user.id
