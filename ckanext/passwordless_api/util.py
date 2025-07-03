@@ -13,7 +13,7 @@ from ckan.model import User
 from ckan.model import ApiToken
 from ckan.plugins import toolkit
 from dateutil import parser as dateparser
-
+import ckan.lib.api_token as api_token
 log = logging.getLogger(__name__)
 
 
@@ -57,15 +57,13 @@ def get_user_from_token(token: str):
     
     log.debug(f"Getting user id for token: {token}")
 
-    # Workaround as action user_list requires sysadmin priviledge
-    # to return emails (email_hash is returned otherwise, with no matches)
-    # action user_show also doesn't return the reset_key...
-    # by_email returns .first() item
-    user = ApiToken.get(id=token)
+    decoded_token = api_token.decode(token)
+    log.debug(f"Getting decoded token: {decoded_token}")
+    api_token = ApiToken.get(id=decoded_token['jti'])
 
-    if user:
-        log.debug(f"Returning user id ({user.id}) for token {token}.")
-        return user
+    if api_token:
+        log.debug(f"Returning user id ({api_token.user_id}) for token {token}.")
+        return api_token
 
     log.warning(f"No matching users found for token: {token}")
     return None
