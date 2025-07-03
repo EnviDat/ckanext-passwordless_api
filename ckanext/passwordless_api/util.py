@@ -59,10 +59,10 @@ def get_user_from_token(token: str):
 
     decoded_token = api_token.decode(token)
     log.debug(f"Getting decoded token: {decoded_token}")
-    api_token = ApiToken.get(id=decoded_token['jti'])
+    dec_token = ApiToken.get(id=decoded_token['jti'])
 
-    if api_token:
-        log.debug(f"Returning user id ({api_token.user_id}) for token {token}.")
+    if dec_token:
+        log.debug(f"Returning user id ({dec_token.user_id}) for token {token}.")
         return api_token
 
     log.warning(f"No matching users found for token: {token}")
