@@ -93,8 +93,7 @@ class PasswordlessAPIPlugin(SingletonPlugin):
                 # Required to bypass errors and continue loading
                 # Do not pollute logs
                 return response
-            log.debug(
-                f"#### Cookie name is: {self.cookie_name} ")
+
             log.debug(
                 "Adding cookie to response with vars: "
                 f"key={self.cookie_name} | value={token} | "
