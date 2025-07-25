@@ -176,7 +176,6 @@ def renew_main_token(user_id: str, expiry: int, units: int):
                 "unit": units,
             },
         )
-        new_api_key['user'] = user_id
         log.debug(f"New API key: {new_api_key}")
         return new_api_key
     else:
