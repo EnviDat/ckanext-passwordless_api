@@ -323,12 +323,8 @@ def get_current_user_and_renew_api_token(
         dict: {user: ckan_user_obj, token: api_token}
     """
     log.debug("start function get_current_user_and_renew_api_token")
-    log.debug("#### context:")
-    log.debug(context)
-    log.debug("#### data_dict:")
-    log.debug(data_dict)
 
-        if (user := context.get("user", "")) != "":
+    if (user := context.get("user", "")) != "":
         log.debug("User ID extracted from context user key")
         user_id = user
     elif user := context.get("auth_user_obj", None):
