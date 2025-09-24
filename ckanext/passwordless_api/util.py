@@ -12,7 +12,6 @@ from ckan.lib.redis import connect_to_redis
 from ckan.model import User
 from ckan.plugins import toolkit
 from dateutil import parser as dateparser
-
 log = logging.getLogger(__name__)
 
 
