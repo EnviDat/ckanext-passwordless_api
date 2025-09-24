@@ -1,3 +1,9 @@
+## 1.1.9 (2025-09-24)
+
+### Fix
+
+- Minor change to check with user.id instead of user.name, and change of text of log statement
+
 ## 1.1.8 (2023-08-23)
 
 ### Fix
