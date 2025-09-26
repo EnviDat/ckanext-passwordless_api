@@ -1,8 +1,13 @@
+## 1.1.10 (2025-09-26)
+- This version is compatible with **CKAN version 2.11.3**
+
+### Fix
+- improve error handling for AnonymousUser 
+
 ## 1.1.9 (2025-09-25)
 
 ### Fix
 
-- This version is compatible with CKAN 2.11.3
 - Minor change to check with user.id instead of user.name, and change of text of log statement
 
 ## 1.1.8 (2023-08-23)
