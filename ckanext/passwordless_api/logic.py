@@ -268,12 +268,18 @@ def revoke_api_token_no_auth(
     """
     log.debug("Revoking API token if present.")
 
+    user_id = None
+
     # User cookie / logged in
     if (user := context.get("user", "")) != "":
         log.debug("User ID extracted from context user key")
         user_id = user
     elif user := context.get("auth_user_obj", None):
         # Handle AnonymousUser in CKAN 2.10
+        if user.id == "":
+            return {
+                "message": "API token is invalid or missing from Authorization header",
+            }
         if user.name != "":
             log.debug("User ID extracted from context auth_user_obj key")
             user_id = user.id
@@ -303,9 +309,10 @@ def revoke_api_token_no_auth(
             return {"message": "failed"}
 
     # Renew with 1 second expiry
-    api_token = util.renew_main_token(user_id, 1, 60)
-    if api_token:
-        return {"message": "success"}
+    if user_id:
+        api_token = util.renew_main_token(user_id, 1, 60)
+        if api_token:
+            return {"message": "success"}
 
     return {"message": "failed"}
 
